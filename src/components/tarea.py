@@ -1,17 +1,26 @@
 import flet as ft
 
+
 class Tarea:
 
-    COLORES_PRIORIDAD = {
-        "Alta": ft.Colors.RED_800,
-        "Media": ft.Colors.ORANGE_800,
-        "Baja": ft.Colors.GREEN_800,
+    # Cada prioridad tiene su icono y su color, pero el color se usa
+    # solo en la etiqueta para no saturar la tarjeta.
+    ICONOS_PRIORIDAD = {
+        "Alta": ft.Icons.ARROW_UPWARD,
+        "Media": ft.Icons.REMOVE,
+        "Baja": ft.Icons.ARROW_DOWNWARD,
     }
 
-    COLORES_BORDE = {
-        "Alta": ft.Colors.RED_300,
-        "Media": ft.Colors.AMBER_300,
-        "Baja": ft.Colors.GREEN_300,
+    COLORES_PRIORIDAD = {
+        "Alta": ft.Colors.RED_700,
+        "Media": ft.Colors.ORANGE_800,
+        "Baja": ft.Colors.GREEN_700,
+    }
+
+    FONDOS_PRIORIDAD = {
+        "Alta": ft.Colors.RED_50,
+        "Media": ft.Colors.ORANGE_50,
+        "Baja": ft.Colors.GREEN_50,
     }
 
     def __init__(self, texto: str, page: ft.Page, prioridad: str, estado: str = "Pendiente"):
@@ -21,42 +30,43 @@ class Tarea:
         self.prioridad = prioridad
 
         self.txt_estado = ft.Text(
-            "Estado: " + self._estado,
-            size=15,
+            self._estado,
+            size=12,
             selectable=True,
-            color=ft.Colors.WHITE,
+            color=ft.Colors.BLACK_45,
         )
 
         self.txt_fantasma_estado = ft.Text(
-            "Estado: " + self._estado,
-            size=14,
-            color=ft.Colors.WHITE,
+            self._estado,
+            size=12,
+            color=ft.Colors.BLACK_45,
         )
 
-        # Contenedor PROPIO y visible de cada tarea con color según su prioridad
+        # La tarjeta de la tarea se mantiene blanca para que el color
+        # quede solo en la etiqueta de prioridad.
         self.contenido = ft.Container(
             padding=12,
-            border_radius=8,
-            bgcolor=self._color_fondo(),
-            border=ft.Border.all(1.5, self._color_borde()),
+            border_radius=10,
+            bgcolor=ft.Colors.WHITE,
+            border=ft.Border.all(1, ft.Colors.GREY_300),
             content=ft.Column(
-                spacing=4,
+                spacing=10,
                 controls=[
                     ft.Text(
-                        "Tarea: " + self.texto,
+                        self.texto,
                         size=15,
                         weight=ft.FontWeight.W_600,
                         selectable=True,
-                        color=ft.Colors.WHITE,
+                        color=ft.Colors.BLACK_87,
                     ),
-                    self.txt_estado,
-                    ft.Text(
-                        "Prioridad: " + self.prioridad,
-                        size=15,
-                        selectable=True,
-                        color=ft.Colors.WHITE,
+                    ft.Row(
+                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                        vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                        controls=[
+                            self._etiqueta_prioridad(),
+                            self.txt_estado,
+                        ],
                     ),
-                    # Aquí luego se agregan más atributos
                 ],
             ),
         )
@@ -72,34 +82,65 @@ class Tarea:
             content_when_dragging=self._placeholder(),
         )
 
-    def _color_fondo(self) -> str:
-        return self.COLORES_PRIORIDAD.get(self.prioridad, ft.Colors.BLACK)
+    def _etiqueta_prioridad(self) -> ft.Container:
+        color = self._color_prioridad()
+        return ft.Container(
+            padding=ft.Padding(8, 3, 10, 3),
+            border_radius=20,
+            bgcolor=self._fondo_prioridad(),
+            content=ft.Row(
+                tight=True,
+                spacing=3,
+                controls=[
+                    ft.Icon(self._icono_prioridad(), size=15, color=color),
+                    ft.Text(
+                        self.prioridad,
+                        size=12,
+                        weight=ft.FontWeight.W_600,
+                        color=color,
+                    ),
+                ],
+            ),
+        )
 
-    def _color_borde(self) -> str:
-        return self.COLORES_BORDE.get(self.prioridad, ft.Colors.BLACK_26)
+    def _icono_prioridad(self) -> str:
+        return self.ICONOS_PRIORIDAD.get(self.prioridad, ft.Icons.REMOVE)
+
+    def _color_prioridad(self) -> str:
+        return self.COLORES_PRIORIDAD.get(self.prioridad, ft.Colors.BLACK_54)
+
+    def _fondo_prioridad(self) -> str:
+        return self.FONDOS_PRIORIDAD.get(self.prioridad, ft.Colors.GREY_100)
 
     def _fantasma(self) -> ft.Container:
         return ft.Container(
             width=280,
             padding=12,
-            border_radius=8,
-            bgcolor=self._color_fondo(),
-            border=ft.Border.all(1.5, self._color_borde()),
-            opacity=0.75,
+            border_radius=10,
+            bgcolor=ft.Colors.WHITE,
+            border=ft.Border.all(1, ft.Colors.GREY_400),
+            opacity=0.95,
+            shadow=ft.BoxShadow(
+                blur_radius=10,
+                color=ft.Colors.BLACK_26,
+                offset=ft.Offset(0, 3),
+            ),
             content=ft.Column(
-                spacing=4,
+                spacing=10,
                 controls=[
                     ft.Text(
-                        "Tarea: " + self.texto,
+                        self.texto,
                         size=15,
                         weight=ft.FontWeight.W_600,
-                        color=ft.Colors.WHITE,
+                        color=ft.Colors.BLACK_87,
                     ),
-                    self.txt_fantasma_estado,
-                    ft.Text(
-                        "Prioridad: " + self.prioridad,
-                        size=14,
-                        color=ft.Colors.WHITE,
+                    ft.Row(
+                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                        vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                        controls=[
+                            self._etiqueta_prioridad(),
+                            self.txt_fantasma_estado,
+                        ],
                     ),
                 ],
             ),
@@ -108,15 +149,16 @@ class Tarea:
     def _placeholder(self) -> ft.Container:
         return ft.Container(
             padding=12,
-            border_radius=8,
-            border=ft.Border.all(1, self._color_borde()),
-            opacity=0.35,
+            border_radius=10,
+            bgcolor=ft.Colors.GREY_100,
+            border=ft.Border.all(1, ft.Colors.GREY_300),
+            opacity=0.6,
             alignment=ft.Alignment.CENTER,
             content=ft.Text(
                 "Moviendo...",
                 size=13,
                 italic=True,
-                color=ft.Colors.WHITE,
+                color=ft.Colors.BLACK_45,
             ),
         )
 
@@ -131,6 +173,6 @@ class Tarea:
     def estado(self, valor: str):
         self._estado = valor
         if hasattr(self, "txt_estado"):
-            self.txt_estado.value = "Estado: " + valor
+            self.txt_estado.value = valor
         if hasattr(self, "txt_fantasma_estado"):
-            self.txt_fantasma_estado.value = "Estado: " + valor
+            self.txt_fantasma_estado.value = valor

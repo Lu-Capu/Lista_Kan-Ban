@@ -5,7 +5,8 @@ sencillo para organizar tareas en tres columnas: Pendiente, En proceso y Complet
 
 Cada tarea se crea desde la barra de arriba, donde se escribe el nombre y se elige
 una prioridad. Despues la tarea se puede arrastrar de una columna a otra y su estado
-se actualiza solo. El color de la tarea cambia segun la prioridad que se le puso.
+se actualiza solo. La tarjeta de cada tarea es blanca y la prioridad se marca con un
+icono y un color suave en una etiqueta.
 
 Asi se ve la aplicacion con algunas tareas de ejemplo:
 
@@ -16,7 +17,7 @@ Que se puede hacer
 - Agregar tareas indicando nombre y prioridad (alta, media o baja)
 - Arrastrar tareas entre las tres columnas
 - Ver el estado actualizado de cada tarea al moverla
-- Distinguir la prioridad por el color de la tarjeta
+- Distinguir la prioridad por el icono y el color de la etiqueta
 
 Requisitos
 

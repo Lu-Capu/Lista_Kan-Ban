@@ -1,5 +1,7 @@
 import flet as ft
+
 from components.tarea import Tarea
+
 GRUPO = "tareas"
 
 
@@ -7,8 +9,14 @@ class Tarjeta:
 
     TITULOS = ["Pendiente", "En proceso", "Completada"]
     ESTADOS = ["Pendiente", "En proceso", "Completada"]
-    COLORES = [ft.Colors.RED_200, ft.Colors.AMBER_200, ft.Colors.GREEN_200]
-    COLOR_RESALTE = ft.Colors.BLUE_100
+
+    # Colores muy suaves para las columnas y un acento por estado.
+    FONDOS = [ft.Colors.RED_50, ft.Colors.AMBER_50, ft.Colors.GREEN_50]
+    BORDES = [ft.Colors.RED_200, ft.Colors.AMBER_200, ft.Colors.GREEN_200]
+    ACENTOS = [ft.Colors.RED_400, ft.Colors.AMBER_600, ft.Colors.GREEN_400]
+
+    COLOR_RESALTE = ft.Colors.BLUE_50
+    ACENTO_RESALTE = ft.Colors.BLUE_400
 
     def __init__(self, page: ft.Page):
         self.page = page
@@ -21,6 +29,8 @@ class Tarjeta:
             )
             for _ in range(len(self.TITULOS))
         ]
+        # Contenedores de cada columna, para cambiarles el borde al resaltar.
+        self.contenedores = []
         # Tarjetas creadas una sola vez para poder resaltarlas/restaurarlas
         self.tarjetas = [
             self._create(i) for i in range(len(self.columnas))
@@ -28,20 +38,30 @@ class Tarjeta:
         self._resaltado: int | None = None
 
     def _create(self, indice: int) -> ft.Card:
+        encabezado = ft.Row(
+            spacing=8,
+            alignment=ft.MainAxisAlignment.START,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            controls=[
+                ft.Container(
+                    width=8,
+                    height=8,
+                    border_radius=4,
+                    bgcolor=self.ACENTOS[indice],
+                ),
+                ft.Text(
+                    self.TITULOS[indice],
+                    size=16,
+                    weight=ft.FontWeight.W_600,
+                    color=ft.Colors.BLACK_87,
+                ),
+            ],
+        )
+
         contenido_tarjeta = ft.Column(
             controls=[
-                ft.Row(
-                    controls=[
-                        ft.Text(
-                            self.TITULOS[indice],
-                            size=18,
-                            weight=ft.FontWeight.BOLD,
-                            color=ft.Colors.BLACK_87,
-                        ),
-                    ],
-                    alignment=ft.MainAxisAlignment.START,
-                ),
-                ft.Divider(color=ft.Colors.BLACK_26, height=1),
+                encabezado,
+                ft.Divider(color=ft.Colors.GREY_200, height=1),
                 self.columnas[indice],
             ],
             expand=True,
@@ -55,13 +75,21 @@ class Tarjeta:
             on_leave=lambda e: self._leave(e, indice),
             on_accept=lambda e: self._accept(e, indice),
         )
+
+        contenedor = ft.Container(
+            padding=16,
+            content=objetivo,
+            expand=True,
+            bgcolor=self.FONDOS[indice],
+            border=ft.Border.all(1, self.BORDES[indice]),
+            border_radius=12,
+        )
+        self.contenedores.append(contenedor)
+
         return ft.Card(
-            content=ft.Container(
-                padding=16,
-                content=objetivo,
-                expand=True,
-            ),
-            bgcolor=self.COLORES[indice],
+            content=contenedor,
+            bgcolor=self.FONDOS[indice],
+            elevation=0,
             expand=True,
         )
 
@@ -85,7 +113,9 @@ class Tarjeta:
         if self._resaltado == indice:
             return
         self._restaurar()
-        self.tarjetas[indice].bgcolor = self.COLOR_RESALTE
+        contenedor = self.contenedores[indice]
+        contenedor.bgcolor = self.COLOR_RESALTE
+        contenedor.border = ft.Border.all(2, self.ACENTO_RESALTE)
         self._resaltado = indice
         self.page.update()
 
@@ -93,7 +123,9 @@ class Tarjeta:
         indice = self._resaltado if indice is None else indice
         if indice is None or self._resaltado != indice:
             return
-        self.tarjetas[indice].bgcolor = self.COLORES[indice]
+        contenedor = self.contenedores[indice]
+        contenedor.bgcolor = self.FONDOS[indice]
+        contenedor.border = ft.Border.all(1, self.BORDES[indice])
         self._resaltado = None
         self.page.update()
 

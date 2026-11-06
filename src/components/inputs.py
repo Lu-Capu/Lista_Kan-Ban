@@ -35,9 +35,9 @@ class Visor():
         btn = ft.Button(
             "Agregar",
             icon=ft.Icons.ADD_TASK,
-            icon_color="black",
-            bgcolor=ft.Colors.CYAN_200,
-            color="black",
+            icon_color=ft.Colors.WHITE,
+            bgcolor=ft.Colors.BLUE_600,
+            color=ft.Colors.WHITE,
             on_click=self.on_click,
         )
         
@@ -57,7 +57,7 @@ class Visor():
     def al_cambiar(self, e):
         if self.combo.value:
             self.lbl_mensaje.value = f"Prioridad elegida: {self.combo.value}"
-            self.lbl_mensaje.color = "blue"
+            self.lbl_mensaje.color = ft.Colors.BLUE_700
             self.lbl_mensaje.update()
         
     def on_click(self, e):
@@ -66,12 +66,12 @@ class Visor():
 
         if not tarea or not tarea.strip():
             self.lbl_mensaje.value = "Ingrese una tarea"
-            self.lbl_mensaje.color = "red"
+            self.lbl_mensaje.color = ft.Colors.RED_700
             self.lbl_mensaje.update()
             return
         if not prioridad:
             self.lbl_mensaje.value = "Ingrese una prioridad"
-            self.lbl_mensaje.color = "red"
+            self.lbl_mensaje.color = ft.Colors.RED_700
             self.lbl_mensaje.update()
             return
         
@@ -82,7 +82,7 @@ class Visor():
         self.combo.value = None
         
         self.lbl_mensaje.value = "Tarea agregada"
-        self.lbl_mensaje.color = "green"
+        self.lbl_mensaje.color = ft.Colors.GREEN_700
         self.update()
 
     def update(self):
