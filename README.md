@@ -7,6 +7,10 @@ Cada tarea se crea desde la barra de arriba, donde se escribe el nombre y se eli
 una prioridad. Despues la tarea se puede arrastrar de una columna a otra y su estado
 se actualiza solo. El color de la tarea cambia segun la prioridad que se le puso.
 
+Asi se ve la aplicacion con algunas tareas de ejemplo:
+
+![Captura de la aplicacion](docs/captura.png)
+
 Que se puede hacer
 
 - Agregar tareas indicando nombre y prioridad (alta, media o baja)
